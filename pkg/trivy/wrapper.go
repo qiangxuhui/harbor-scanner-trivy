@@ -127,6 +127,7 @@ func (w *wrapper) prepareScanCmd(imageRef ImageRef, outputFile string) (*exec.Cm
 	}
 
 	cmd := exec.Command(name, args...)
+    log.Infof("trivy cmd is : %s", cmd.String())
 
 	cmd.Env = w.ambassador.Environ()
 
