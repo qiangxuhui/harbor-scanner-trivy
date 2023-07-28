@@ -23,9 +23,21 @@ $(BINARY): $(SOURCES)
 docker-build: build
 	docker build --no-cache -t $(IMAGE) .
 
+loong64-docker-build:
+	docker build \
+		--build-arg http_proxy=http://10.130.0.20:7890 \
+		--build-arg https_proxy=http://10.130.0.20:7890 \
+	       	--no-cache \
+		-f Dockerfile.loong64 \
+		-t cr.loongnix.cn/qxh_deploy/scanner-trivy:0.18 \
+		.
+
 lint:
 	./bin/golangci-lint --build-tags component,integration run -v
 
 .PHONY: setup
 setup:
 	curl -sfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh| sh -s v1.21.0
+
+run: 
+	docker run -d -p 8080:8080 --name trivy_deploy --hostname trivy_deploy -v /var/run/docker.sock:/var/run/docker.sock cr.loongnix.cn/qxh_deploy/scanner-trivy:0.18

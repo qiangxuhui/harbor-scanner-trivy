@@ -1,0 +1,21 @@
+FROM cr.loongnix.cn/loongson/loongnix-server:8.4.0
+
+RUN dnf makecache && \
+	dnf install wget docker-ce redis -y && \
+	dnf clean all
+	
+
+RUN \
+	wget https://github.com/Loongson-Cloud-Community/harbor-scanner-trivy/releases/download/v0.18.0/scanner-trivy-0.18 && \
+	chmod +x scanner-trivy-0.18 && \
+	mv scanner-trivy-0.18 /usr/bin/scanner-trivy && \
+	wget https://github.com/Loongson-Cloud-Community/harbor-scanner-trivy/releases/download/v0.18.0/trivy-v0.16.0 && \
+	chmod +x trivy-v0.16.0 && \
+	mv trivy-v0.16.0 /usr/bin/trivy
+
+COPY start.sh /usr/bin/start.sh
+COPY loong64/redis.conf /etc/redis.conf
+
+EXPOSE 8080
+
+CMD ["start.sh"]
