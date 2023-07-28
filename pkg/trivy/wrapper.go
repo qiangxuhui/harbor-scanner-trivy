@@ -126,8 +126,15 @@ func (w *wrapper) prepareScanCmd(imageRef ImageRef, outputFile string) (*exec.Cm
 		return nil, err
 	}
 
+	docker_args := []string{"pull", imageRef.Name}
+	pullCmd := exec.Command("/usr/bin/docker", docker_args...)
+	log.Infof("image pull cmd: %s", pullCmd.String())
+	if _, err := pullCmd.CombinedOutput(); err != nil {
+		log.Infof("pull image error: %v", err)
+	}
+
 	cmd := exec.Command(name, args...)
-    log.Infof("trivy cmd is : %s", cmd.String())
+	log.Infof("trivy cmd is : %s", cmd.String())
 
 	cmd.Env = w.ambassador.Environ()
 
